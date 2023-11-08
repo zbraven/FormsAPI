@@ -13,9 +13,15 @@ namespace FormsAPI.Controllers
       
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string searchString)
         {
-            return View(Repository.Products);
+            var producsts = Repository.Products;
+            if (!String.IsNullOrEmpty(searchString)) 
+            {
+                ViewBag.SearchString = searchString;    
+                producsts= producsts.Where(p=>p.Name.ToLower().Contains(searchString)).ToList();  
+            }
+            return View(producsts);
         }
 
         public IActionResult Privacy()
