@@ -1,7 +1,10 @@
-﻿namespace FormsAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FormsAPI.Models
 {
     public class Product
     {
+        [Display(Name="Ürün ID")]
         public int ProductId { get; set; }
         public string Name { get; set; } = string.Empty;
 
