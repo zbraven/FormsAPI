@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using FormsAPI.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-
 namespace FormsApp.Controllers;
 
 public class HomeController : Controller
@@ -12,8 +11,7 @@ public class HomeController : Controller
     {
     }
 
-
-
+    [HttpGet]
     public IActionResult Index(string searchString, string category)
     {
         var products = Repository.Products;
@@ -29,17 +27,17 @@ public class HomeController : Controller
             products = products.Where(p => p.CategoryId == int.Parse(category)).ToList();
         }
 
-        //ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name", category);
+        // ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name", category);
 
         var model = new ProductViewModel
         {
             Products = products,
             Categories = Repository.Categories,
-            SelectedCategory = category,
+            SelectedCategory = category
         };
+
         return View(model);
     }
-
 
     [HttpGet]
     public IActionResult Create()
@@ -50,16 +48,33 @@ public class HomeController : Controller
 
 
     [HttpPost]
-    public IActionResult Create(Product model)
+    public async Task<IActionResult> Create(Product model, IFormFile imageFile)
     {
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" }; //Kabul edilecek uzantı türlerini ayarladım
+        var extension = Path.GetExtension(imageFile.FileName);  //abc.jpeg kısmındaki .jpeg'i aldım
+        var randomFileName = string.Format($"{Guid.NewGuid().ToString()}{extension}"); //seçilen resime guid'le benzersiz id oluşturdum, başkasının fotoğrafın üstüne yazmasın diye
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", randomFileName);
+
+        if (imageFile != null)
+        {
+            if (!allowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("", "Geçerli bir resim seçiniz.");
+            }
+        }
+
         if (ModelState.IsValid)
         {
-            model.ProductId = (Repository.Products.Count) + 1;
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+            model.Image = randomFileName;
+            model.ProductId = Repository.Products.Count + 1;
             Repository.CreateProduct(model);
             return RedirectToAction("Index");
         }
         ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
         return View(model);
-        
     }
 }
