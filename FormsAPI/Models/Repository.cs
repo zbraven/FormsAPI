@@ -7,8 +7,8 @@
 
         static Repository()
         {
-            _categories.Add(new Category { CategoryId=1, CategoryName="Telefon"});
-            _categories.Add(new Category { CategoryId=2, CategoryName="Bilgisayar"});
+            _categories.Add(new Category { CategoryId=1, Name="Telefon"});
+            _categories.Add(new Category { CategoryId=2, Name = "Bilgisayar"});
 
             _products.Add(new Product {  ProductId=1, Name="İphone 14", Price=40000, IsActive=true, Image="1.jpg",CategoryId=1});
             _products.Add(new Product {  ProductId=2, Name= "İphone 15", Price=50000, IsActive=true, Image="2.jpg",CategoryId=1});

@@ -1,34 +1,38 @@
-﻿using FormsAPI.Models;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using FormsAPI.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace FormsAPI.Controllers
+
+namespace FormsApp.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    public HomeController()
     {
-   
+    }
 
-        public HomeController()
+    public IActionResult Index(string searchString, string category)
+    {
+        var products = Repository.Products;
+
+        if (!String.IsNullOrEmpty(searchString))
         {
-      
+            ViewBag.SearchString = searchString;
+            products = products.Where(p => p.Name.ToLower().Contains(searchString)).ToList();
         }
 
-        public IActionResult Index(string searchString)
+        if (!String.IsNullOrEmpty(category) && category != "0")
         {
-            var producsts = Repository.Products;
-            if (!String.IsNullOrEmpty(searchString)) 
-            {
-                ViewBag.SearchString = searchString;    
-                producsts= producsts.Where(p=>p.Name.ToLower().Contains(searchString)).ToList();  
-            }
-            return View(producsts);
+            products = products.Where(p => p.CategoryId == int.Parse(category)).ToList();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
+        return View(products);
+    }
 
-      
+    public IActionResult Privacy()
+    {
+        return View();
     }
 }
