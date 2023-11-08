@@ -7,16 +7,23 @@ namespace FormsAPI.Models
         [Display(Name="Ürün ID")]
         public int ProductId { get; set; }
 
+
         [Display(Name = "Ürün Adı")]
-        [Required]
-        public string Name { get; set; } = string.Empty;
+        [Required(ErrorMessage ="Gerekli bir alan")]
+        public string? Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Lütfen 0 ila 100000 arasında bir fiyat girin")]
         [Display(Name = "Fiyat")]
-        public decimal Price { get; set; }
+        [Range(0,100000)]
+        public decimal? Price { get; set; }
+
+        [Required]
         [Display(Name = "Resim")]
-        public string Image { get; set; } = string.Empty;
+        public string? Image { get; set; } = string.Empty;
         public bool IsActive { get; set; }
 
+        [Required]
         [Display(Name = "Category")]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
     }
 }
